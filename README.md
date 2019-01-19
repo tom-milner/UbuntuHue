@@ -1,10 +1,10 @@
-# ubuntuhue
+# Ubuntu Hue
 
-> e light controller
+> Philips Hue light controller, built with Electron and Vue.js
 
 #### Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
