@@ -1,0 +1,17 @@
+.button {
+  border: 1px solid $color-white;
+  border-radius: 3px;
+  color: $color-white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // text-transform: uppercase;
+  transition: all .5s;
+  box-shadow: 0 1.5rem 4rem rgba(#000, 0.15);
+
+
+  &--active {
+    background-color: $color-white;
+    color: black;
+  }
+}
