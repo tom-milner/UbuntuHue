@@ -1,10 +1,16 @@
 <template>
   <div class="home">
-    <div :class="{'button--active':(isOn)}" class="home__power button" v-on:click="lightToggle()">
+    <div
+      :class="{ 'button--active': isOn }"
+      class="home__power button"
+      v-on:click="lightToggle()"
+    >
       <!-- <img class="home__power__switch" src="../assets/switch.svg"> -->
-      {{message}}
+      {{ message }}
     </div>
-    <div class="home__scene button" @click="toggleScene()">{{scene[1].name}}</div>
+    <div class="home__scene button" @click="toggleScene">
+      {{ scene[1].name }}
+    </div>
   </div>
 </template>
 
@@ -12,14 +18,16 @@
 import GroupService from "../services/GroupService";
 import SceneService from "../services/SceneService";
 
+const buttonState = ["On", "Off"];
+
 export default {
   data() {
     return {
       isOn: false,
-      message: "Off",
+      message: buttonState[0],
       scene: "",
       scenes: {},
-      sceneNo: 1
+      sceneNo: 1,
     };
   },
   methods: {
@@ -28,19 +36,18 @@ export default {
       GroupService.setAllState(1, this.isOn);
     },
 
-    toggleScene: function() {
-      if (this.sceneNo == this.scenes.length - 1) {
-        this.sceneNo = 1;
+    toggleScene: function(event) {
+      if (event) {
+        event.pageX <= window.innerWidth / 2 ? this.sceneNo-- : this.sceneNo++;
       }
-      this.scene = this.scenes[this.sceneNo];
-      this.sceneNo++;
+      this.scene = this.scenes[this.sceneNo % this.scenes.length];
     },
 
     checkStates: async function() {
       let res = (await GroupService.getAll()).data[1];
       let state = res.state.all_on;
       this.isOn = state;
-    } //,
+    }, //,
     // checkScenes: async function() {
     //   let tempScenes = (await SceneService.getAll()).data;
     //   let currScene = Object.keys(tempScenes)[0];
@@ -60,24 +67,28 @@ export default {
       SceneService.setScene(1, this.scene[0]);
       this.isOn = true;
     },
+    // isOn: function() {
+
+    //   if (this.isOn) {
+    //     this.message = "On";
+    //   } else {
+    //     this.message = "Off";
+    //   }
+    // },
     isOn: function() {
-      if (this.isOn) {
-        this.message = "On";
-      } else {
-        this.message = "Off";
-      }
-    }
+      this.message = buttonState[this.isOn ^ 1];
+    },
   },
 
   async beforeCreate() {
     let data = (await SceneService.getAll()).data;
     this.scenes = Object.entries(data);
-    this.toggleScene();
-  }
+    this.toggleScene(); // Turn on the scene.
+  },
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import "../scss/main.scss";
 .home {
   display: flex;
@@ -103,7 +114,8 @@ export default {
     text-align: center;
     font-size: 4rem;
     font-weight: 200;
-
+    user-select: none;
+    cursor: pointer;
     &__switch {
       height: 9rem;
       // fill: $color-white;
